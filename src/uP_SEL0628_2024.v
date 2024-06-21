@@ -25,10 +25,10 @@
 //Módulos básicos
 
 //	Decodificador 2x4
-module decod24 #(parameter Size=8)(
+module decod24 #(parameter Size=4)(
 	input [1:0] S,
 	//input en,
-	output [3:0] Y
+	output [Size-1:0] Y
 );
 
 	//wire Y_tmp;
@@ -38,7 +38,7 @@ module decod24 #(parameter Size=8)(
 				(S == 2'b10) ? 4'b0100 :
 				 4'b1000;
 
-	//assign Y = Y_tmp & {4{en}};
+	//assign Y = Y_tmp & {Size{en}};
 	
 endmodule
 
@@ -90,10 +90,10 @@ module register #(parameter Size=8)(
 
 	always @(posedge clk or negedge clr_n)
 		if (~clr_n)
-			q = {Size{1'b0}};
+			q <= {Size{1'b0}};
 		else
 			if (en)
-				q = d;
+				q <= d;
 
 endmodule
 
@@ -106,13 +106,13 @@ module counter #(parameter Size=8)(
 
 	always @(posedge clk or negedge clr_n)
 		if (~clr_n)
-			q = {Size{1'b0}};
+			q <= {Size{1'b0}};
 		else
 			if (en)
 				if (ld)
-					q = d;
+					q <= d;
 				else
-					q = q + 1;
+					q <= q + 1;
 
 endmodule
 
@@ -152,7 +152,7 @@ module regbank #(parameter Size=8)(
 	wire [3:0] en;
 	wire [Size-1:0] rfile [0:3];
 	
-	decod24 #(8) sel (.S(a1), .Y(en));
+	decod24 #(4) sel (.S(a1), .Y(en));
 
 	register #(8) r0 (.clk(clk), .clr_n(clr_n), .en(en[0] & we), .d(wd), .q(rfile[0]));
 	register #(8) r1 (.clk(clk), .clr_n(clr_n), .en(en[1] & we), .d(wd), .q(rfile[1]));
@@ -190,9 +190,9 @@ module fsm (
 	// State storage
 	always @ (posedge clk or negedge clr_n)
 		if (~clr_n)
-			actual_state = Fetch;
+			actual_state <= Fetch;
 		else
-			actual_state = next_state;
+			actual_state <= next_state;
 	
 	// State transition
 	always @ (actual_state, opcode, funct, Zero) begin
@@ -260,7 +260,7 @@ module uP_SEL0628_2024 (
 	output [7:0] data_out
 );
 
-	wire PC_en, PC_ld, LdSt, IR_en, Wb, RF_we, Carry;
+	wire PC_en, PC_ld, LdSt, IR_en, Wb, RF_we, Carry, Zero;
 	wire [1:0] a1, a2, ALU_Control;
 	wire [5:0] PC_out;
 	wire [7:0] IR_out, ALUOut, wd, rd1, rd2;
