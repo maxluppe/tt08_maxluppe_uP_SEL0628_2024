@@ -20,16 +20,16 @@ module tt_um_maxluppe_uP0628_24 (
     assign uo_out[7]  = 1'b0;
     assign uio_oe  = 1;
 
-  // List all unused inputs to prevent warnings
-    wire _unused = &{ena, uio_in, 1'b0};
+// List all unused inputs to prevent warnings
+	wire _unused = &{ena, uio_in, 1'b0};
 
     	uP_SEL0628_2024 cpu (
-            .clk(clk),
-            .clr_n(rst_n),
-            .data_in(ui_in),
-            .we(uo_out[6]),
-            .addr(uo_out[5:0]),
-            .data_out(uio_out)
+		.clk(clk),
+		.clr_n(rst_n),
+	    	.data_in(ui_in),	//Transformar em bidirecional
+            	.we(uo_out[6]),
+          	.addr(uo_out[5:0]),
+            	.data_out(uio_out)
 	);
 
 endmodule
