@@ -25,10 +25,10 @@
 //Módulos básicos
 
 //	Decodificador 2x4
-module decod24 #(parameter Size=4)(
+module decod24 (
 	input [1:0] S,
 	//input en,
-	output [Size-1:0] Y
+	output [3:0] Y
 );
 
 	//wire Y_tmp;
@@ -152,7 +152,7 @@ module regbank #(parameter Size=8)(
 	wire [3:0] en;
 	wire [Size-1:0] rfile [0:3];
 	
-	decod24 #(4) sel (.S(a1), .Y(en));
+	decod24 sel (.S(a1), .Y(en));
 
 	register #(8) r0 (.clk(clk), .clr_n(clr_n), .en(en[0] & we), .d(wd), .q(rfile[0]));
 	register #(8) r1 (.clk(clk), .clr_n(clr_n), .en(en[1] & we), .d(wd), .q(rfile[1]));
@@ -260,7 +260,7 @@ module uP_SEL0628_2024 (
 	output [7:0] data_out
 );
 
-	wire PC_en, PC_ld, LdSt, IR_en, Wb, RF_we, Carry, Zero;
+	wire PC_en, PC_ld, LdSt, IR_en, Wb, RF_we, Zero;	//Carry
 	wire [1:0] a1, a2, ALU_Control;
 	wire [5:0] PC_out;
 	wire [7:0] IR_out, ALUOut, wd, rd1, rd2;
@@ -275,7 +275,7 @@ module uP_SEL0628_2024 (
 	
 	regbank #(8) REGFILE (.clk(clk), .clr_n(clr_n), .we(RF_we), .a1(a1), .a2(a2), .wd(wd), .rd1(rd1), .rd2(rd2));
 	
-	ula #(8) ALU (.funct(ALU_Control), .A(rd1), .B(rd2), .ALUOut(ALUOut), .Carry(Carry), .Zero(Zero));
+	ula #(8) ALU (.funct(ALU_Control), .A(rd1), .B(rd2), .ALUOut(ALUOut), .Carry(), .Zero(Zero));
 
 	mux21 #(8) WR_BCK (.S(Wb), .A0(ALUOut), .A1(data_in), .Y(wd));
 	
